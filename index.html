@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telegram Mini App</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .content {
+            display: none;
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .glass-box {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+        
+        .token-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .center-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .mining-button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .check-button {
+            width: 80px;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .bottom-nav {
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            color: #3498db;
+        }
+        
+        .nav-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .coming-soon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 24px;
+            color: #888;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .task-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        
+        .task-image {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .task-text {
+            flex-grow: 1;
+        }
+        
+        .task-reward {
+            font-weight: bold;
+            color: #3498db;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
+    <div id="home-content" class="content">
+        <div class="token-display glass-box">
+            <span>Token:</span>
+            <span id="token-count">0</span>
+        </div>
+        <img src="/api/placeholder/300/200" alt="Home Image" class="center-image">
+        <button id="mining-button" class="mining-button">Start mining</button>
+    </div>
+    <div id="riddle-content" class="content">
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div id="tasks-content" class="content">
+        <img src="/api/placeholder/300/100" alt="Tasks Banner" class="center-image">
+        <div class="glass-box task-item">
+            <div class="task-info">
+                <img src="/api/placeholder/50/50" alt="YouTube" class="task-image">
+                <div class="task-text">
+                    <div>Subscribe to our YouTube</div>
+                    <div class="task-reward">20+</div>
+                </div>
+            </div>
+            <button class="check-button" data-task="youtube" data-reward="20" data-url="https://www.youtube.com">Check</button>
+        </div>
+        <div class="glass-box task-item">
+            <div class="task-info">
+                <img src="/api/placeholder/50/50" alt="What Video" class="task-image">
+                <div class="task-text">
+                    <div>What Video</div>
+                    <div class="task-reward">8.5+</div>
+                </div>
+            </div>
+            <button class="check-button" data-task="what-video" data-reward="8.5" data-url="https://www.youtube.com">Check</button>
+        </div>
+        <div class="glass-box task-item">
+            <div class="task-info">
+                <img src="/api/placeholder/50/50" alt="Telegram" class="task-image">
+                <div class="task-text">
+                    <div>Follow our channel</div>
+                    <div class="task-reward">10+</div>
+                </div>
+            </div>
+            <button class="check-button" data-task="telegram" data-reward="10" data-url="https://t.me/">Check</button>
+        </div>
+        <div class="glass-box task-item">
+            <div class="task-info">
+                <img src="/api/placeholder/50/50" alt="Twitter" class="task-image">
+                <div class="task-text">
+                    <div>Follow our X</div>
+                    <div class="task-reward">10+</div>
+                </div>
+            </div>
+            <button class="check-button" data-task="twitter" data-reward="10" data-url="https://twitter.com">Check</button>
+        </div>
+    </div>
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage('home')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('riddle')">
+            <i class="fas fa-brain"></i>
+            <span>Riddle</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('tasks')">
+            <i class="fas fa-tasks"></i>
+            <span>Tasks</span>
+        </div>
+    </div>
+    <script>
+        let tokenCount = 0;
+        let miningInterval;
+        let miningProgress = 0;
+        const miningButton = document.getElementById('mining-button');
+        const tokenDisplay = document.getElementById('token-count');
+        const checkButtons = document.querySelectorAll('.check-button');
+
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('home-content').style.display = 'block';
+        }, 10000);
+
+        function switchPage(page) {
+            document.querySelectorAll('.content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(`${page}-content`).style.display = 'block';
+            document.querySelector(`.nav-item:nth-child(${['home', 'riddle', 'tasks'].indexOf(page) + 1})`).classList.add('active');
+            recordActivity(page);
+        }
+
+        miningButton.addEventListener('click', function() {
+            if (miningProgress === 0) {
+                startMining();
+            } else if (miningProgress >= 30) {
+                claimTokens();
+            }
+            recordActivity('mining_button_click');
+        });
+
+        function startMining() {
+            miningProgress = 0;
+            miningButton.textContent = miningProgress.toFixed(1);
+            miningInterval = setInterval(() => {
+                miningProgress += 0.1;
+                miningButton.textContent = miningProgress.toFixed(1);
+                if (miningProgress >= 30) {
+                    clearInterval(miningInterval);
+                    miningButton.textContent = 'Claim +30';
+                }
+            }, 360000); // 0.1 every 6 minutes (3 hours total)
+        }
+
+        function claimTokens() {
+            tokenCount += 30;
+            tokenDisplay.textContent = tokenCount;
+            miningProgress = 0;
+            miningButton.textContent = 'Start mining';
+        }
+
+        checkButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const task = this.dataset.task;
+                const reward = parseFloat(this.dataset.reward);
+                const url = this.dataset.url;
+                window.open(url, '_blank');
+                startTaskTimer(this, reward);
+            });
+        });
+
+        function startTaskTimer(button, reward) {
+            let timeLeft = 3600; // 60 minutes in seconds
+            button.disabled = true;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                button.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    tokenCount += reward;
+                    tokenDisplay.textContent = tokenCount.toFixed(1);
+                    button.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function recordActivity(activity) {
+            // This function would typically send data to a server
+            console.log('Activity recorded:', activity);
+            // In a real app, you might use something like:
+            // fetch('/api/record-activity', {
+            //     method: 'POST',
+            //     body: JSON.stringify({ activity: activity }),
+            //     headers: { 'Content-Type': 'application/json' }
+            // });
+        }
+    </script>
+</body>
+
+</html>
